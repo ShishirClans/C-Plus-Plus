@@ -1,15 +1,16 @@
-//This program reads a sequence of commands from an input file and processes them using a Cstack and a CPPstack.
-// The program reads the size of the Cstack from the input file, dynamically allocates memory for the Cstack using malloc,
-// and processes the commands from the input file. The program pushes values onto the Cstack and CPPstack, pops values from the
-// Cstack and CPPstack, and prints the top of the Cstack and CPPstack. The program also prints the contents of the Cstack
-// and CPPstack at the end of the input file.
-
+/*Shishir Ghorashainee
+ *CSC 402
+ * Feb 3rd, 2025
+ * Prof. Gary Newell
+ */
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <cstdlib>  // For malloc
+
+
 
 using namespace std;
 
@@ -19,6 +20,9 @@ void push(int* stack, int size, int& numelts, int value);
 void pop(int* stack, int& numelts);
 void top(const int* stack, int numelts);
 void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts);
+
+void multiplyStacks(vector<int>& CPPstack, int* Cstack, int numelts, int value);
+
 
 // Main function
 int main() {
@@ -89,9 +93,18 @@ void processData(ifstream& inf, vector<int>& CPPstack, int* Cstack, int size) { 
             // Print the top of the Cstack
             top(Cstack, numelts);
         }
+
+
+
+        else if (command == "MUL") {
+            multiplyStacks(CPPstack, Cstack, numelts, value);
+        }
+
+
+
     }
 
-    // After processing, print both stacks
+    // print both stacks after processing
     printStack(CPPstack, Cstack, numelts); // Print the CPPstack and Cstack
 }
 
@@ -125,7 +138,7 @@ void top(const int* stack, int numelts) { // Print the top of the Cstack
 // Function to print the stacks
 void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts) { // Print the CPPstack and Cstack
     // Print the CPPstack
-    cout << "CPPSTACK (top to bottom):" << endl;
+    cout << "CPPSTACK:" << endl;
     if (CPPstack.empty()) { // Check if the CPPstack is empty
         cout << "STACK IS EMPTY" << endl; // Print an error message
     } else { // If the CPPstack is not empty
@@ -135,7 +148,7 @@ void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts) { /
     }
 
     // Print the Cstack
-    cout << "Cstack contents (top to bottom):" << endl;
+    cout << "CSTACK:" << endl;
     if (numelts == 0) { // Check if the Cstack is empty
         cout << "STACK IS EMPTY" << endl; // Print an error message
     } else { // If the Cstack is not empty
@@ -147,7 +160,106 @@ void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts) { /
 
 
 
+void multiplyStacks(vector<int>& CPPstack, int* Cstack, int numelts, int value) {
+    // Multiply each element in the CPPstack
+    for (int& num : CPPstack) {
+        num *= value;
+    }
+
+    // Multiply each element in the Cstack
+    for (int i = 0; i < numelts; ++i) {
+        Cstack[i] *= value;
+    }
+}
+
+
+
+
 //Output:
+/*
+Enter the path to the input file:
+C:\Users\shish\Desktop\C++\input_1.txt
+5
+5
+CPPSTACK:
+4
+3
+2
+1
+CSTACK:
+4
+3
+2
+1
+
+--------------------------------------------------------
+
+Enter the path to the input file:
+C:\Users\shish\Desktop\C++\input_2.txt
+NO PUSH - STACK IS FULL
+NO PUSH - STACK IS FULL
+CPPSTACK:
+5
+4
+3
+2
+1
+CSTACK:
+3
+2
+1
+
+--------------------------------------------------------
+
+Enter the path to the input file:
+C:\Users\shish\Desktop\C++\input_3.txt
+7
+7
+12
+12
+NO TOP
+NO TOP
+NO POP - STACK IS EMPTY
+NO POP - STACK IS EMPTY
+CPPSTACK:
+STACK IS EMPTY
+CSTACK:
+STACK IS EMPTY
+
+--------------------------------------------------------
+
+Enter the path to the input file:
+C:\Users\shish\Desktop\C++\input_4.txt
+2
+2
+4
+4
+CPPSTACK:
+6
+8
+10
+CSTACK:
+6
+8
+10
+
+
+
+--------------------------------------------------------
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+
 
 /*
  * Output for t1.in:
