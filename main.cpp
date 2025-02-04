@@ -19,8 +19,7 @@ void processData(ifstream& inf, vector<int>& CPPstack, int* Cstack, int size);
 void push(int* stack, int size, int& numelts, int value);
 void pop(int* stack, int& numelts);
 void top(const int* stack, int numelts);
-void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts);
-
+void printStack( vector<int>& CPPstack, int* Cstack, int numelts);
 void multiplyStacks(vector<int>& CPPstack, int* Cstack, int numelts, int value);
 
 
@@ -94,13 +93,9 @@ void processData(ifstream& inf, vector<int>& CPPstack, int* Cstack, int size) { 
             top(Cstack, numelts);
         }
 
-
-
-        else if (command == "MUL") {
+        else if (command == "MUL") {  // If command is "MUL", multiply both stacks
             multiplyStacks(CPPstack, Cstack, numelts, value);
         }
-
-
 
     }
 
@@ -136,7 +131,7 @@ void top(const int* stack, int numelts) { // Print the top of the Cstack
 }
 
 // Function to print the stacks
-void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts) { // Print the CPPstack and Cstack
+void printStack( vector<int>& CPPstack, int* Cstack, int numelts) { // Print the CPPstack and Cstack
     // Print the CPPstack
     cout << "CPPSTACK:" << endl;
     if (CPPstack.empty()) { // Check if the CPPstack is empty
@@ -158,14 +153,12 @@ void printStack(const vector<int>& CPPstack, const int* Cstack, int numelts) { /
     }
 }
 
-
-
+// Function to multiply each element in both stacks by a given value
 void multiplyStacks(vector<int>& CPPstack, int* Cstack, int numelts, int value) {
     // Multiply each element in the CPPstack
     for (int& num : CPPstack) {
         num *= value;
     }
-
     // Multiply each element in the Cstack
     for (int i = 0; i < numelts; ++i) {
         Cstack[i] *= value;
@@ -177,6 +170,7 @@ void multiplyStacks(vector<int>& CPPstack, int* Cstack, int numelts, int value) 
 
 //Output:
 /*
+
 Enter the path to the input file:
 C:\Users\shish\Desktop\C++\input_1.txt
 5
@@ -245,5 +239,5 @@ CSTACK:
 
 --------------------------------------------------------
 
-
 */
+
