@@ -32,7 +32,7 @@ int main() {
 
     // Declare ifstream variable to read the file
     ifstream inf(filepath); // Open the file
-    if (!inf.is_open()) { // Check if the file was opened successfully
+    if (!inf) { // Check if the file was opened successfully
         cerr << "Error: Could not open file." << endl; // Print an error message
         return 1;  // Exit with error code
     }
@@ -135,7 +135,7 @@ void printStack( vector<int>& CPPstack, int* Cstack, int numelts) { // Print the
     // Print the CPPstack
     cout << "CPPSTACK:" << endl;
     if (CPPstack.empty()) { // Check if the CPPstack is empty
-        cout << "STACK IS EMPTY" << endl; // Print an error message
+        cout << "STACK IS EMPTY" << endl;
     } else { // If the CPPstack is not empty
         for (int i = CPPstack.size() - 1; i >= 0; --i) { // Print the CPPstack from top to bottom
             cout << CPPstack[i] << endl; // Print the value
@@ -145,7 +145,7 @@ void printStack( vector<int>& CPPstack, int* Cstack, int numelts) { // Print the
     // Print the Cstack
     cout << "CSTACK:" << endl;
     if (numelts == 0) { // Check if the Cstack is empty
-        cout << "STACK IS EMPTY" << endl; // Print an error message
+        cout << "STACK IS EMPTY" << endl;
     } else { // If the Cstack is not empty
         for (int i = numelts - 1; i >= 0; --i) { // Print the Cstack from top to bottom
             cout << Cstack[i] << endl; // Print the value
