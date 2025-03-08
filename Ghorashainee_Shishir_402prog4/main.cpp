@@ -3,6 +3,7 @@
 #include "OrderedSet.h"
 #include <fstream>
 #include <iostream>
+#include <stack>
 using namespace std;
 
 // Function to read integers from a file into a set
@@ -134,7 +135,7 @@ int main() {
 }
 
 // Function implementations
-
+/*
 void readFileToSet(const string &filename, mySet &set) {
     ifstream infile(filename);
     if (!infile) {
@@ -163,6 +164,51 @@ void readFileToOrderedSet(const string &filename, OrderedSet &set) {
     infile.close();
     set.SortSet();
 }
+*/
+void readFileToSet(const string &filename, mySet &set) {
+    ifstream infile(filename);
+    if (!infile) {
+        cerr << "Error opening file " << filename << endl;
+        return;
+    }
+
+    stack<int> tempStack;
+    int number;
+    while (infile >> number) {
+        tempStack.push(number);
+    }
+    infile.close();
+
+    while (!tempStack.empty()) {
+        set.addelt(tempStack.top());
+        tempStack.pop();
+    }
+}
+
+void readFileToOrderedSet(const string &filename, OrderedSet &set) {
+    ifstream infile(filename);
+    if (!infile) {
+        cerr << "Error opening file " << filename << endl;
+        return;
+    }
+
+    stack<int> tempStack;
+    int number;
+    while (infile >> number) {
+        tempStack.push(number);
+    }
+    infile.close();
+
+    while (!tempStack.empty()) {
+        set.addelt(tempStack.top());
+        tempStack.pop();
+    }
+    set.SortSet(); // Ensures OrderedSet remains sorted
+}
+
+
+
+
 
 void addIntegersFromFile(const string &filename, mySet &set, const string &setName) {
     ifstream infile(filename);
