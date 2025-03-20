@@ -1,0 +1,226 @@
+// Shape.h
+#ifndef SHAPE_H
+#define SHAPE_H
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Shape {
+protected:
+    string color;
+    int screenPositionX, screenPositionY;
+    bool hasLines;
+    int lineWidth;
+    string lineColor;
+    string fillType;
+
+public:
+    Shape();
+    Shape(string, int, int, bool, int, string, string);
+    virtual void printInfo() const;
+    virtual ~Shape() {}
+};
+
+#endif
+
+// Shape.cpp
+#include "Shape.h"
+
+Shape::Shape() : color("Transparent"), screenPositionX(0), screenPositionY(0), hasLines(false), lineWidth(0), lineColor("BLACK"), fillType("NONE") {}
+
+Shape::Shape(string c, int x, int y, bool lines, int lw, string lc, string ft) : color(c), screenPositionX(x), screenPositionY(y), hasLines(lines), lineWidth(lw), lineColor(lc), fillType(ft) {}
+
+void Shape::printInfo() const {
+    cout << "SHAPE INFO" << endl;
+    cout << "POSITION: " << screenPositionX << " , " << screenPositionY << endl;
+    cout << "Color: " << color << endl;
+    cout << (hasLines ? "Has Lines" : "No Lines") << endl;
+    cout << "Line Width: " << lineWidth << " Line Color: " << lineColor << endl;
+    cout << "Fill type: " << fillType << endl;
+}
+
+// Circle.h
+#ifndef CIRCLE_H
+#define CIRCLE_H
+#include "Shape.h"
+#include <cmath>
+
+class Circle : public Shape {
+protected:
+    int centerX, centerY;
+    float radius;
+
+public:
+    Circle();
+    Circle(int, int, float, string, int, int, bool, int, string, string);
+    virtual void printInfo() const override;
+    float getCircumference() const;
+    virtual float getArea() const;
+};
+
+#endif
+
+// Circle.cpp
+#include "Circle.h"
+
+Circle::Circle() : Shape(), centerX(0), centerY(0), radius(0.0) {}
+
+Circle::Circle(int cx, int cy, float r, string c, int x, int y, bool lines, int lw, string lc, string ft) : Shape(c, x, y, lines, lw, lc, ft), centerX(cx), centerY(cy), radius(r) {}
+
+void Circle::printInfo() const {
+    cout << "CIRCLE" << endl;
+    cout << "CENTER POSITION: " << centerX << " , " << centerY << endl;
+    cout << "RADIUS: " << radius << " AREA: " << getArea() << endl;
+    cout << "CIRCUMFERENCE: " << getCircumference() << endl;
+    Shape::printInfo();
+}
+
+float Circle::getCircumference() const {
+    return 2 * M_PI * radius;
+}
+
+float Circle::getArea() const {
+    return M_PI * radius * radius;
+}
+
+// Triangle.h
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
+#include "Shape.h"
+#include <cmath>
+
+class Triangle : public Shape {
+protected:
+    int pt1X, pt1Y, pt2X, pt2Y, pt3X, pt3Y;
+
+public:
+    Triangle();
+    Triangle(int, int, int, int, int, int, string, int, int, bool, int, string, string);
+    virtual void printInfo() const override;
+    float getArea() const;
+    float getPerimeter() const;
+};
+
+#endif
+
+// Triangle.cpp
+#include "Triangle.h"
+
+Triangle::Triangle() : Shape(), pt1X(0), pt1Y(0), pt2X(0), pt2Y(0), pt3X(0), pt3Y(0) {}
+
+Triangle::Triangle(int x1, int y1, int x2, int y2, int x3, int y3, string c, int x, int y, bool lines, int lw, string lc, string ft) : Shape(c, x, y, lines, lw, lc, ft), pt1X(x1), pt1Y(y1), pt2X(x2), pt2Y(y2), pt3X(x3), pt3Y(y3) {}
+
+void Triangle::printInfo() const {
+    cout << "TRIANGLE" << endl;
+    cout << "POINT 1: " << pt1X << " , " << pt1Y << endl;
+    cout << "POINT 2: " << pt2X << " , " << pt2Y << endl;
+    cout << "POINT 3: " << pt3X << " , " << pt3Y << endl;
+    cout << "AREA: " << getArea() << endl;
+    cout << "PERIMETER: " << getPerimeter() << endl;
+    Shape::printInfo();
+}
+
+float Triangle::getArea() const {
+    return 0.5 * abs(pt1X * (pt2Y - pt3Y) + pt2X * (pt3Y - pt1Y) + pt3X * (pt1Y - pt2Y));
+}
+
+float Triangle::getPerimeter() const {
+    auto distance = [](int x1, int y1, int x2, int y2) {
+        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+    };
+    return distance(pt1X, pt1Y, pt2X, pt2Y) + distance(pt2X, pt2Y, pt3X, pt3Y) + distance(pt3X, pt3Y, pt1X, pt1Y);
+}
+
+// (Continue with Rectangle.h/.cpp, Sphere.h/.cpp, Cuboid.h/.cpp, and main.cpp)
+
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
+
+#include "Shape.h"
+#include <iostream>
+using namespace std;
+
+class Rectangle : public Shape {
+protected:
+    int topLeftX, topLeftY, height, width;
+
+public:
+    Rectangle() : topLeftX(0), topLeftY(0), height(0), width(0) {}
+    Rectangle(int x, int y, int h, int w, string c, bool hl, int lw, string lc, string ft)
+        : Shape(c, x, y, hl, lw, lc, ft), topLeftX(x), topLeftY(y), height(h), width(w) {}
+
+    virtual void printInfo() override {
+        cout << "RECTANGLE\n";
+        cout << "TOP LEFT: " << topLeftX << " , " << topLeftY << endl;
+        cout << "HEIGHT: " << height << endl;
+        cout << "WIDTH: " << width << endl;
+        cout << "AREA: " << getArea() << endl;
+        cout << "PERIMETER: " << getPerimeter() << endl;
+        Shape::printInfo();
+    }
+
+    virtual float getArea() override { return width * height; }
+    float getPerimeter() { return 2 * (height + width); }
+};
+
+#endif
+
+#ifndef SPHERE_H
+#define SPHERE_H
+
+#include "Circle.h"
+#include <cmath>
+
+class Sphere : public Circle {
+protected:
+    int centerZ;
+
+public:
+    Sphere() : centerZ(0) {}
+    Sphere(int x, int y, int z, float r, string c, bool hl, int lw, string lc, string ft)
+        : Circle(x, y, r, c, hl, lw, lc, ft), centerZ(z) {}
+
+    virtual void printInfo() override {
+        cout << "SPHERE\n";
+        cout << "CENTER POSITION: " << centerX << " , " << centerY << " , " << centerZ << endl;
+        cout << "RADIUS: " << radius << " SURFACE AREA: " << getArea() << endl;
+        cout << "VOLUME: " << getVolume() << endl;
+        Shape::printInfo();
+    }
+
+    virtual float getArea() override { return 4 * M_PI * radius * radius; }
+    float getVolume() { return (4.0 / 3.0) * M_PI * radius * radius * radius; }
+};
+
+#endif
+
+#ifndef CUBOID_H
+#define CUBOID_H
+
+#include "Rectangle.h"
+
+class Cuboid : public Rectangle {
+protected:
+    int topLeftZ, length;
+
+public:
+    Cuboid() : topLeftZ(0), length(0) {}
+    Cuboid(int x, int y, int z, int h, int w, int l, string c, bool hl, int lw, string lc, string ft)
+        : Rectangle(x, y, h, w, c, hl, lw, lc, ft), topLeftZ(z), length(l) {}
+
+    virtual void printInfo() override {
+        cout << "CUBOID\n";
+        cout << "TOP LEFT POSITION: " << topLeftX << " , " << topLeftY << " , " << topLeftZ << endl;
+        cout << "HEIGHT: " << height << endl;
+        cout << "WIDTH: " << width << endl;
+        cout << "LENGTH: " << length << endl;
+        cout << "SURFACE AREA: " << getArea() << endl;
+        cout << "VOLUME: " << getVolume() << endl;
+        Shape::printInfo();
+    }
+
+    virtual float getArea() override { return 2 * (length * width + length * height + width * height); }
+    float getVolume() { return length * width * height; }
+};
+
+#endif
