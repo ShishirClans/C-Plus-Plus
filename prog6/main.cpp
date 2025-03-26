@@ -75,10 +75,7 @@ int main() {
 
     cout << "\nQueued Strings\n\n";
     while (!stringQueue.isempty()) cout << (-stringQueue) << "\n";
-/*
-    cout << "\nQueued Doubles\n";
-    while (!doubleQueue.isempty()) cout << (-doubleQueue) << "\n";  // Print as string
-*/
+
     cout << "\nQueued Doubles\n\n";
     while (!doubleQueue.isempty()) {
         cout << (-doubleQueue) << "\n";  // Directly print the string
