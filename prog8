@@ -1,0 +1,163 @@
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <mutex>
+#include <condition_variable>
+#include <random>
+#include <future>
+#include <chrono>
+#include <ctime>
+
+using namespace std;
+
+vector<thread> allThreads(50);
+bool flag = false;
+mutex mtx;
+condition_variable cv;
+int counter = 0;
+mt19937 myEngine(time(0));
+
+// Part A
+
+void doStuff(int id) {
+    for (int i = 0; i < 20; ++i) {
+        counter++;
+    }
+    cout << "Thread " << id << " has finished" << endl;
+}
+
+
+
+// Part B
+void doStuff2(int id) {
+    unique_lock<mutex> lk(mtx);
+    while (!flag) {
+        cv.wait(lk);
+    }
+    lk.unlock();
+
+    for (int i = 0; i < 20; ++i) {
+        counter++;
+    }
+
+    lock_guard<mutex> lock(mtx);
+    cout << "Thread " << id << " has finished" << endl;
+}
+
+// part C
+
+void doStuff3(int id, mutex &mc) {
+    for (int i = 0; i < 20; ++i) {
+        lock_guard<mutex> lock(mc);
+        counter++;
+    }
+    cout << "Thread " << id << " has finished" << endl;
+}
+
+
+// part D
+void doStuff4(promise<int> pr, int id, mutex &mD) {
+    uniform_int_distribution<int> myDist1(1, 20);
+    int val = myDist1(myEngine);
+
+    {
+        lock_guard<mutex> lk(mD);
+        cout << "Thread " << id << " is calculating square of " << val << endl;
+    }
+
+    uniform_int_distribution<int> myDist2(20, 500);
+    int sleepTime = myDist2(myEngine);
+
+    {
+        lock_guard<mutex> lk(mD);
+        cout << "Thread " << id << " is SLEEPING for " << sleepTime << " milliseconds." << endl;
+    }
+
+    this_thread::sleep_for(chrono::milliseconds(sleepTime));
+    pr.set_value(val * val);
+}
+
+
+int main() {
+    cout << "\nPart A. - no synchronization\n" << endl;
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i] = thread(doStuff, i);
+    }
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i].join();
+    }
+    cout << "The expected value of count is 1000" << endl;
+    cout << "The actual value of count is " << counter << endl << endl;
+
+    // part B
+    counter = 0;
+    cout << "PART B. - Condition Variables\n" << endl;
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i] = thread(doStuff2, i);
+    }
+    {
+        lock_guard<mutex> lk(mtx);
+        flag = true;
+        cv.notify_all();
+    }
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i].join();
+    }
+    cout << "The expected value of count is 1000" << endl;
+    cout << "The actual value of count is " << counter << endl << endl;
+
+    // part C
+
+    /*
+    counter = 0;
+    mutex mtxC;
+    cout << "Part C. - Mutex Synchronization\n" << endl;
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i] = thread(doStuff3, i, ref(mtxC));
+    }
+    for (int i = 0; i < 50; ++i) {
+        allThreads[i].join();
+    }
+    cout << "The expected value of count is 1000" << endl;
+    cout << "The actual value of count is " << counter << endl << endl;
+
+*/
+    counter = 0;
+    mutex mtxC;
+    cout << "Part C. - Mutex Synchronization\n" << endl;
+    vector<thread> allThreadsC;
+
+    for (int i = 0; i < 50; ++i) {
+        allThreadsC.push_back(thread(doStuff3, i, ref(mtxC)));
+    }
+    for (auto &th : allThreadsC) {
+        th.join();
+    }
+
+    cout << "The expected value of count is 1000" << endl;
+    cout << "The actual value of count is " << counter << endl << endl;
+
+
+
+
+
+    // part D
+    cout << "Part D. - Promises and Futures\n" << endl;
+    vector<future<int>> allFutures;
+    mutex mtxD;
+    for (int i = 0; i < 50; ++i) {
+        promise<int> prms;
+        future<int> temp = prms.get_future();
+        allFutures.push_back(move(temp));
+        thread t(doStuff4, move(prms), i, ref(mtxD));
+        t.detach();
+    }
+
+    for (int i = 0; i < 50; ++i) {
+        int val = allFutures[i].get();
+        cout << "Thread " << i << " has returned " << val << endl;
+    }
+
+    cout << "\nPROGRAM EXECUTION COMPLETE" << endl;
+    return 0;
+}
